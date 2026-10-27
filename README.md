@@ -23,15 +23,13 @@ direnv allow
 
 ## Run it
 
-### Outbound — dial out to one or more phone numbers
+### Outbound — dial out to a phone number
 
 ```bash
 poetry run livekit_voice_call_runner \
     --direction outbound \
     --phone-number +1234567890 \
-    --instructions-path examples/instructions/discuss_car_issue.md \
-    --rounds 1 \
-    --concurrency 1
+    --instructions-path examples/instructions/discuss_car_issue.md
 ```
 
 ### Inbound — listen for incoming calls
@@ -48,6 +46,4 @@ poetry run livekit_voice_call_runner \
 |---|---|---|
 | `--direction` | yes | `outbound` or `inbound` |
 | `--instructions-path` | yes | Path to the agent instructions file |
-| `--phone-number` | outbound only | Phone number(s) to dial (repeatable) |
-| `--rounds` | outbound only | Number of rounds to run (default: 1) |
-| `--concurrency` | outbound only | Concurrent scenarios per round (default: 1) |
+| `--phone-number` | outbound only | Phone number to dial |

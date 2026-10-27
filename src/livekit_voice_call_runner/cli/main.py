@@ -28,20 +28,7 @@ def run() -> None:
     )
     parser.add_argument(
         "--phone-number",
-        action="append",
-        help="Phone number to call (outbound only, can be specified multiple times).",
-    )
-    parser.add_argument(
-        "--rounds",
-        type=int,
-        default=1,
-        help="Number of rounds to run the scenarios (outbound only).",
-    )
-    parser.add_argument(
-        "--concurrency",
-        type=int,
-        default=1,
-        help="Number of scenarios to run concurrently (outbound only).",
+        help="Phone number to call (outbound only).",
     )
     args = parser.parse_args()
 
