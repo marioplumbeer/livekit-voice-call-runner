@@ -1,3 +1,5 @@
+from typing import Optional
+
 from livekit import api
 from livekit.plugins import openai
 from openai.types.beta.realtime.session import TurnDetection
@@ -23,7 +25,6 @@ def _create_call_session_starter(logger: CallLogger, cfg: Config) -> CallSession
         config=CallSessionStarterConfigRealtime(
             llm=openai.realtime.RealtimeModel.with_azure(
                 azure_deployment=cfg.call_session.llm.azure_deployment,
-                api_version=cfg.call_session.llm.api_version,
                 api_key=cfg.call_session.llm.api_key,
                 azure_endpoint=cfg.call_session.llm.azure_endpoint,
                 voice=cfg.call_session.llm.voice,
@@ -76,7 +77,8 @@ def create_livekit_api(cfg: Config) -> api.LiveKitAPI:
 
 def create_call_runner_props(
     instructions: str,
-    phone_number_to: str,
+    phone_number_to: Optional[str],
+    sip_uri: Optional[str],
     correlation_id: str,
     cfg: Config,
     outbound_cfg: OutboundConfig,
@@ -105,6 +107,7 @@ def create_call_runner_props(
         outbound_config=OutboundCallRunnerConfig(
             phone_number_from=outbound_cfg.phone_number_from,
             phone_number_to=phone_number_to,
+            sip_uri=sip_uri,
             sip_trunk_id=outbound_cfg.sip_trunk_id,
             participant_identity=outbound_cfg.participant_identity,
             ringing_timeout=outbound_cfg.ringing_timeout,

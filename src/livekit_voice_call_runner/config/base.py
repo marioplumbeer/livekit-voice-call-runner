@@ -10,7 +10,6 @@ load_dotenv()
 
 class ConfigCallSessionLLM(BaseModel):
     azure_deployment: str
-    api_version: str
     api_key: str
     azure_endpoint: str
     voice: str
@@ -75,7 +74,6 @@ def get_config() -> Config:
         call_session=ConfigCallSession(
             llm=ConfigCallSessionLLM(
                 azure_deployment=get_env_or_raise("CALL_SESSION_LLM_AZURE_DEPLOYMENT"),
-                api_version=get_env_or_raise("CALL_SESSION_LLM_API_VERSION"),
                 api_key=get_env_or_raise("CALL_SESSION_LLM_API_KEY"),
                 azure_endpoint=get_env_or_raise("CALL_SESSION_LLM_AZURE_ENDPOINT"),
                 voice=get_env_or_raise("CALL_SESSION_LLM_VOICE"),

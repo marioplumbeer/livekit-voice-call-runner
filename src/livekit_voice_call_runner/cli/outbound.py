@@ -3,9 +3,8 @@ import sys
 import uuid
 
 from livekit_voice_call_runner import config, factory
-from livekit_voice_call_runner.concurrency.tasks_runner import ConcurrentTasksRunner
 from livekit_voice_call_runner.logger import create_logger
-from livekit_voice_call_runner.outbound.call_orchestrator import OutboundCallOrchestrator
+from livekit_voice_call_runner.outbound.call_runner import OutboundCallRunner
 
 logger = create_logger(name=__name__, correlation_id=str(uuid.uuid4()))
 
@@ -18,20 +17,16 @@ async def _run(args) -> None:
     livekit_api = factory.create_livekit_api(cfg=cfg)
 
     try:
-        call_orchestrator = OutboundCallOrchestrator(
-            instructions=[instructions],
-            phone_numbers=args.phone_number,
-            concurrency=args.concurrency,
-            rounds=args.rounds,
-            concurrent_tasks_runner=ConcurrentTasksRunner(
-                logger=create_logger(name="ConcurrentTasksRunner"),
-            ),
-            logger=create_logger(name="OutboundCallOrchestrator"),
+        call_runner_props = factory.create_call_runner_props(
+            instructions=instructions,
+            phone_number_to=args.phone_number,
+            sip_uri=args.sip_uri,
+            correlation_id=str(uuid.uuid4()),
             cfg=cfg,
             outbound_cfg=outbound_cfg,
             livekit_api=livekit_api,
         )
-        await call_orchestrator.run()
+        await OutboundCallRunner(props=call_runner_props).run()
         logger.info("Successfully ran.")
         sys.exit(0)
     except Exception as e:
