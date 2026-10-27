@@ -23,12 +23,17 @@ direnv allow
 
 ## Run it
 
-### Outbound — dial out to a phone number
+### Outbound — dial out to a phone number or a SIP URI
 
 ```bash
 poetry run livekit_voice_call_runner \
     --direction outbound \
     --phone-number +1234567890 \
+    --instructions-path examples/instructions/discuss_car_issue.md
+
+poetry run livekit_voice_call_runner \
+    --direction outbound \
+    --sip-uri "sip:+12345678901@a.b.c;transport=tcp" \
     --instructions-path examples/instructions/discuss_car_issue.md
 ```
 
@@ -47,3 +52,4 @@ poetry run livekit_voice_call_runner \
 | `--direction` | yes | `outbound` or `inbound` |
 | `--instructions-path` | yes | Path to the agent instructions file |
 | `--phone-number` | outbound only | Phone number to dial |
+| `--sip-uri` | outbound only | SIP URI(s), e.g. `sip:user@host;transport=tcp`, to dial directly |

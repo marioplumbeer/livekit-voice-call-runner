@@ -1,3 +1,5 @@
+from typing import Optional
+
 from livekit import api
 from livekit.plugins import openai
 from openai.types.beta.realtime.session import TurnDetection
@@ -75,7 +77,8 @@ def create_livekit_api(cfg: Config) -> api.LiveKitAPI:
 
 def create_call_runner_props(
     instructions: str,
-    phone_number_to: str,
+    phone_number_to: Optional[str],
+    sip_uri: Optional[str],
     correlation_id: str,
     cfg: Config,
     outbound_cfg: OutboundConfig,
@@ -104,6 +107,7 @@ def create_call_runner_props(
         outbound_config=OutboundCallRunnerConfig(
             phone_number_from=outbound_cfg.phone_number_from,
             phone_number_to=phone_number_to,
+            sip_uri=sip_uri,
             sip_trunk_id=outbound_cfg.sip_trunk_id,
             participant_identity=outbound_cfg.participant_identity,
             ringing_timeout=outbound_cfg.ringing_timeout,

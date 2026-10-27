@@ -20,6 +20,7 @@ def test_run(mocker, tmp_path):
     args = argparse.Namespace(
         instructions_path=str(instructions_file),
         phone_number="+1234567890",
+        sip_uri=None,
     )
 
     with pytest.raises(SystemExit) as exc_info:

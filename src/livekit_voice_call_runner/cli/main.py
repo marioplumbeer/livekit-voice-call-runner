@@ -26,14 +26,19 @@ def run() -> None:
         required=True,
         help="Path to the file containing the instructions for the call agent.",
     )
-    parser.add_argument(
+    target = parser.add_mutually_exclusive_group()
+    target.add_argument(
         "--phone-number",
-        help="Phone number to call (outbound only).",
+        help="Phone number to call (outbound only, exclusive with --sip-uri).",
+    )
+    target.add_argument(
+        "--sip-uri",
+        help="SIP URI to call, e.g. sip:user@host;transport=tcp (outbound only, exclusive with --phone-number).",
     )
     args = parser.parse_args()
 
-    if args.direction == Direction.OUTBOUND and not args.phone_number:
-        parser.error("--phone-number is required for outbound direction")
+    if args.direction == Direction.OUTBOUND and not (args.phone_number or args.sip_uri):
+        parser.error("--phone-number or --sip-uri is required for outbound direction")
 
     if args.direction == Direction.OUTBOUND:
         outbound.run(args)

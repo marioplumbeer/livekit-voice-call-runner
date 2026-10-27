@@ -20,6 +20,7 @@ async def _run(args) -> None:
         call_runner_props = factory.create_call_runner_props(
             instructions=instructions,
             phone_number_to=args.phone_number,
+            sip_uri=args.sip_uri,
             correlation_id=str(uuid.uuid4()),
             cfg=cfg,
             outbound_cfg=outbound_cfg,

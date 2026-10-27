@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from livekit.agents.voice import room_io
 from livekit.protocol import sip
@@ -10,11 +11,13 @@ from livekit_voice_call_runner.logger import CallLogger
 from livekit_voice_call_runner.model import BaseModel
 from livekit_voice_call_runner.outbound.call_dialer import OutboundCallDialer
 from livekit_voice_call_runner.outbound.call_room_connector import OutboundCallRoomConnector
+from livekit_voice_call_runner.outbound.sip_uri import parse_sip_uri
 
 
 class OutboundCallRunnerConfig(BaseModel):
     phone_number_from: str
-    phone_number_to: str
+    phone_number_to: Optional[str] = None
+    sip_uri: Optional[str] = None
     sip_trunk_id: str
     participant_identity: str
     ringing_timeout: int
@@ -41,6 +44,26 @@ class OutboundCallRunner:
         self._outbound_config = props.outbound_config
         self._logger = props.logger
 
+    def _build_dial_request(self) -> sip.CreateSIPParticipantRequest:
+        request = sip.CreateSIPParticipantRequest(
+            room_name=self._call_room_connector.room.name,
+            sip_call_to=self._outbound_config.phone_number_to or "",
+            sip_number=self._outbound_config.phone_number_from,
+            sip_trunk_id=self._outbound_config.sip_trunk_id,
+            participant_identity=self._outbound_config.participant_identity,
+            ringing_timeout={"seconds": self._outbound_config.ringing_timeout},
+            max_call_duration={"seconds": self._outbound_config.max_call_duration},
+            wait_until_answered=True,
+        )
+        if self._outbound_config.sip_uri:
+            # dial the URI directly through an inline trunk instead of the configured one
+            uri = parse_sip_uri(uri=self._outbound_config.sip_uri)
+            request.sip_call_to = uri.user
+            request.sip_trunk_id = ""
+            request.trunk.hostname = uri.hostname
+            request.trunk.transport = uri.transport
+        return request
+
     async def _run(self):
         await self._call_room_connector.connect()
         await self._call_event_listener.listen_to_room(room=self._call_room_connector.room)
@@ -53,18 +76,7 @@ class OutboundCallRunner:
             session=self._call_session_starter.session,
             agent=self._call_agent,
         )
-        await self._call_dialer.dial(
-            request=sip.CreateSIPParticipantRequest(
-                room_name=self._call_room_connector.room.name,
-                sip_call_to=self._outbound_config.phone_number_to,
-                sip_number=self._outbound_config.phone_number_from,
-                sip_trunk_id=self._outbound_config.sip_trunk_id,
-                participant_identity=self._outbound_config.participant_identity,
-                ringing_timeout={"seconds": self._outbound_config.ringing_timeout},
-                max_call_duration={"seconds": self._outbound_config.max_call_duration},
-                wait_until_answered=True,
-            )
-        )
+        await self._call_dialer.dial(request=self._build_dial_request())
         shutdown_event = await asyncio.wait_for(
             self._call_event_listener.wait_for_shutdown(),
             timeout=self._outbound_config.max_call_duration,

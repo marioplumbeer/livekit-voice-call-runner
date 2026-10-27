@@ -13,6 +13,10 @@ from livekit_voice_call_runner.cli.main import run
             "livekit_voice_call_runner.cli.outbound.run",
         ),
         (
+            ["--direction", "outbound", "--sip-uri", "sip:user@host"],
+            "livekit_voice_call_runner.cli.outbound.run",
+        ),
+        (
             ["--direction", "inbound"],
             "livekit_voice_call_runner.cli.inbound.run",
         ),
@@ -48,6 +52,22 @@ def test_run_when_direction_is_invalid(argv):
 
 def test_run_when_instructions_path_invalid():
     sys.argv = ["livekit_voice_call_runner", "--direction", "inbound"]
+    with pytest.raises(SystemExit):
+        run()
+
+
+def test_run_when_phone_number_and_sip_uri():
+    sys.argv = [
+        "livekit_voice_call_runner",
+        "--direction",
+        "outbound",
+        "--instructions-path",
+        "some/path.md",
+        "--phone-number",
+        "+1234567890",
+        "--sip-uri",
+        "sip:user@host",
+    ]
     with pytest.raises(SystemExit):
         run()
 
