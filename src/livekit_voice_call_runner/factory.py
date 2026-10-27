@@ -23,7 +23,6 @@ def _create_call_session_starter(logger: CallLogger, cfg: Config) -> CallSession
         config=CallSessionStarterConfigRealtime(
             llm=openai.realtime.RealtimeModel.with_azure(
                 azure_deployment=cfg.call_session.llm.azure_deployment,
-                api_version=cfg.call_session.llm.api_version,
                 api_key=cfg.call_session.llm.api_key,
                 azure_endpoint=cfg.call_session.llm.azure_endpoint,
                 voice=cfg.call_session.llm.voice,

@@ -21,7 +21,6 @@ def shared_env(monkeypatch):
         "LIVEKIT_API_SECRET": "test-api-secret",
         "LIVEKIT_ROOM_NAME_PREFIX": "test-room",
         "CALL_SESSION_LLM_AZURE_DEPLOYMENT": "gpt-4o-realtime",
-        "CALL_SESSION_LLM_API_VERSION": "2024-10-01-preview",
         "CALL_SESSION_LLM_API_KEY": "test-llm-key",
         "CALL_SESSION_LLM_AZURE_ENDPOINT": "https://test.openai.azure.com",
         "CALL_SESSION_LLM_VOICE": "alloy",
