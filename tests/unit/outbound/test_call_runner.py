@@ -70,6 +70,16 @@ async def test_run(mock_props):
     mock_props.call_session_starter.start_session.assert_called_once()
 
 
+async def test_run_logs_call_ended_without_error(mock_props, mocker):
+    """The shutdown event has a `name` key, which must not be passed as reserved logging `extra`."""
+    spy_error = mocker.spy(mock_props.logger, "error")
+
+    runner = OutboundCallRunner(props=mock_props)
+    await runner.run()
+
+    spy_error.assert_not_called()
+
+
 async def test_shutdown_called_even_on_exception(mock_props):
     mock_props.call_room_connector.connect = AsyncMock(side_effect=RuntimeError("connect failed"))
 
