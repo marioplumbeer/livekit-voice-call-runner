@@ -81,7 +81,7 @@ class OutboundCallRunner:
             self._call_event_listener.wait_for_shutdown(),
             timeout=self._outbound_config.max_call_duration,
         )
-        self._logger.info("Call ended.", extra=shutdown_event)
+        self._logger.info("Call ended.", extra={"shutdown_event": shutdown_event})
 
     async def _shutdown(self):
         logger_extra = {**self._outbound_config.model_dump()}
